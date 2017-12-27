@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev-server": "babel-node server/index.js",
-    "lint-server": "eslint --ext .js server",
+    "lint-server": "eslint server --ext .js --fix",
     "pre-commit": [
       "lint-server"
     ]
