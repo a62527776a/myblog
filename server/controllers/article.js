@@ -4,14 +4,13 @@
  */
 export default (router) => {
   router
-    .get('/articles', findArticles)
-    .post('/articles')
-    .patch('/articles/:id')
-    .delete('/articles/:id')
+    .get('/api/articles', findArticles)
+    .post('/api/articles')
+    .patch('/api/articles/:id')
+    .delete('/api/articles/:id', findArticlesById)
 }
 
-
-let findArticles = async(ctx, next) => {
+let findArticles = async (ctx, next) => {
   ctx.status = 200
   ctx.body = {
     success: true,
@@ -22,6 +21,6 @@ let findArticles = async(ctx, next) => {
   await next()
 }
 
-let findArticlesById = async(ctx, next) => {
-  
+let findArticlesById = async (ctx, next) => {
+
 }
