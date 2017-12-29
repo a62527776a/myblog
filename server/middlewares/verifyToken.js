@@ -1,4 +1,6 @@
 import jwt from 'jsonwebtoken'
+import config from '../config'
+import errCode from './errCode'
 
 /**
  * @param {*} ctx
@@ -13,17 +15,30 @@ import jwt from 'jsonwebtoken'
 
 export default async function (ctx, next) {
   const authorization = ctx.get('Authorization')
-  if (!authorization) ctx.throw(401, `no token detected in http header 'Authorization'`)
-  const token = authorization.split(' ')[1]
+  if (!authorization) {
+    ctx.body = {
+      code: 30101,
+      msg: errCode[30101]
+    }
+    return
+  }
   let tokenContent
   try {
-    tokenContent = await jwt.verify(token, ctx.config.jwt.cert)
+    tokenContent = await jwt.verify(authorization, config.jwt.cert)
+    ctx.token = tokenContent
   } catch (e) {
     if (e.name === 'TokenExpiredError') {
-      ctx.throw(401, 'token expried')
+      ctx.body = {
+        code: 30102,
+        msg: errCode[30102]
+      }
+      return
     }
-    ctx.throw(401, 'invalid token')
+    ctx.body = {
+      code: 30103,
+      msg: errCode[30103]
+    }
+    return
   }
-  ctx.token = tokenContent
   await next()
 }

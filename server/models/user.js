@@ -1,10 +1,32 @@
+/**
+ * @param { String } avatar 用户头像 以base64格式存储
+ * @param { Array } tags 用户文章标签 默认为无 由用户初始化
+ * @param { String } gender 用户性别 默认为null 登录后修改
+ * @param { Object } loved 配对用户 默认为null 登录后修改 对象为另一个用户 理念是对方性别可男可女 未设置性别不可设置配对用户
+ */
+
 import mongoose from 'mongoose'
 
 const userSchema = new mongoose.Schema({
   nickname: String,
-  username: String,
-  password: String,
-  avatar: String,
+  username: {
+    type: String,
+    required: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  // 用户头像以base64的格式储存
+  avatar: {
+    type: String,
+    default: ''
+  },
+  tags: [],
+  gender: {
+    type: String,
+    default: ''
+  },
   createTime: {
     type: Date,
     default: Date.now
