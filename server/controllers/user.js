@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import User from '../models/user.js'
+import User from '../models/user'
 import middlewares from '../middlewares'
 import crypto from 'crypto'
 import config from '../config'
@@ -15,9 +15,10 @@ export default async router => {
 /**
  * 注册账户
  * @method register
- * @param { * } ctx.request.body.username 用户名
- * @param { * } ctx.request.body.password 密码
- * @param { * } ctx.request.body.passwordrepeat 重复输入密码
+ * @param { String } ctx.request.body.username 用户名
+ * @param { String } ctx.request.body.password 密码
+ * @param { String } ctx.request.body.passwordrepeat 重复输入密码
+ * @param { String } ctx.request.body.gender 性别
  */
 let register = async (ctx, next) => {
   let body = ctx.request.body
@@ -25,6 +26,7 @@ let register = async (ctx, next) => {
     const username = body.username
     const password = body.password
     const passwordrepeat = body.passwordrepeat
+    const gender = body.gender
     // 验证用户名格式6-12位a-zA-Z0-9组成
     if (!(/^[a-zA-Z0-9]{6,12}$/).test(username)) {
       ctx.body = {
@@ -49,6 +51,14 @@ let register = async (ctx, next) => {
       }
       return
     }
+    //gender 性别 male 男 female 女
+    if ((gender !== 'male' && gender !== 'female')) {
+      ctx.body = {
+        code: 10114,
+        msg: middlewares.errCode[10114]
+      }
+      return
+    }
     /**
      * exec() 将findOne查询的结果返回Promise对象
      */
@@ -62,7 +72,8 @@ let register = async (ctx, next) => {
       user = new User({
         nickname: username,
         username: username,
-        password: crypto.createHash('md5').update(password).digest('hex')
+        password: crypto.createHash('md5').update(password).digest('hex'),
+        gender: gender
       })
       await user.save()
         .then(val => {
@@ -119,7 +130,6 @@ let login = async (ctx, next) => {
       }
       const token = jwt.sign({
         uid: res._id,
-        username: res.username,
         exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60
       }, config.jwt.cert)
       ctx.body = {
@@ -148,8 +158,10 @@ let getUserinfo = async (ctx, next) => {
       data: {
         nickname: user.nickname,
         username: user.username,
-        avatar: user.avatar,
-        tags: user.tags
+        tags: user.tags,
+        gender: user.gender,
+        avatar: user && user.avatar,
+        loved: user && user.loved
       }
     }
   }).catch(e => {
@@ -164,6 +176,7 @@ let getUserinfo = async (ctx, next) => {
  * @method updateUserinfo
  * @param { String } ctx.request.body.nickname 用户昵称
  * @param { String } ctx.request.body.avatar 用户头像 base64格式
+ * TODO: 修改用户性别 配对对象
  * 修改用户信息
  * 可供修改的只有用户昵称以及用户头像
  */

@@ -25,7 +25,7 @@ let findArticles = async (ctx, next) => {
   await Article
     .find()
     .then(articles => {
-      
+
     })
     .catch(e => {
 
@@ -48,7 +48,7 @@ let postArticle = async (ctx, next) => {
   const required = ['title', 'content', 'tags']
   try {
     required.forEach(val => {
-      if (!ctx.request.body[val]) throw(new Error(`necessary have field ${val}`))
+      if (!ctx.request.body[val]) throw (new Error(`necessary have field ${val}`))
     })
   } catch (e) {
     ctx.body = {
@@ -67,7 +67,7 @@ let postArticle = async (ctx, next) => {
   }
   let user = await User.findById({_id: ctx.token._id})
     .exec().catch(e => { console.log(e) })
-  
+
   ctx.body = {
     code: 200,
     msg: '666'
