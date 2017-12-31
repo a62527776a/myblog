@@ -2,7 +2,6 @@
 
 
 *** 
-TODO LIST  
 ***SERVER*** 
 1. jwt token验证 
 2. 用户 登录 注册 修改基本信息 获取用户信息

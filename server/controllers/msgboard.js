@@ -29,4 +29,6 @@ let findMsgBorad = async (ctx, next) => {
     }
     return
   }
+  let msgboard = await MsgBoard
+    // .findOne()
 }

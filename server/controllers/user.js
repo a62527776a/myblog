@@ -1,3 +1,9 @@
+/**
+ * @method askPair 请求配对
+ * 配对信息需要双方确认
+ * 配对状态 confirm 确认中 accept
+ */
+
 import jwt from 'jsonwebtoken'
 import User from '../models/user'
 import middlewares from '../middlewares'
@@ -10,6 +16,7 @@ export default async router => {
     .get('/api/user', middlewares.verifyToken, getUserinfo)
     .post('/api/user/login', login)
     .patch('/api/user', middlewares.verifyToken, updateUserinfo)
+    .post('/api/user/ask', middlewares.verifyToken, askPair)
 }
 
 /**
@@ -176,13 +183,13 @@ let getUserinfo = async (ctx, next) => {
  * @method updateUserinfo
  * @param { String } ctx.request.body.nickname 用户昵称
  * @param { String } ctx.request.body.avatar 用户头像 base64格式
- * TODO: 修改用户性别 配对对象
+ * @param { String } ctx.request.body.gender 用户性别 male 男 female 女
  * 修改用户信息
- * 可供修改的只有用户昵称以及用户头像
+ * 可供修改的有用户昵称 用户头像 用户性别
  */
 let updateUserinfo = async (ctx, next) => {
   // 验证是否为允许修改的字段
-  let allowModify = ['nickname', 'avatar']
+  let allowModify = ['nickname', 'avatar', 'gender', 'loved']
   for (let i in ctx.request.body) {
     if (!allowModify.includes(i)) {
       ctx.body = {
@@ -207,6 +214,14 @@ let updateUserinfo = async (ctx, next) => {
     ctx.body = {
       code: 10109,
       msg: middlewares.errCode[10109]
+    }
+    return
+  }
+  // 用户性别验证
+  if (ctx.request.body.gender && ctx.request.body.gender !== 'male' && ctx.request.body.gender !== 'female') {
+    ctx.body = {
+      code: 40102,
+      msg: middlewares.errCode[40102]
     }
     return
   }
