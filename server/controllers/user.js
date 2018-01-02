@@ -19,6 +19,7 @@ export default async router => {
     .patch('/api/user', middlewares.verifyToken, updateUserinfo)
     .post('/api/user/ask', middlewares.verifyToken, askPair)
     .patch('/api/user/ask', middlewares.verifyToken, resolvePair)
+    .delete('/api/user/loved', middlewares.verifyToken, leave)
 }
 
 /**
@@ -402,4 +403,43 @@ let resolvePair = async (ctx, next) => {
         }
     }).catch(e => { console.log(e) })
   })
+}
+
+/**
+ * @method leave 离开 解除配对关系 将双方配对关系解除 单方解除则双方解除
+ */
+let leave = async (ctx, next) => {
+  let user = await User.findOne({
+    _id: ctx.token.uid
+  }).exec().catch( e => console.log(e) )
+  // 边界检查
+  console.log(user)
+  if (!user.loved) {
+    ctx.body = {
+      code: 10122,
+      msg: middlewares.errCode[10122]
+    }
+    return
+  }
+  let loved = await User.findOne({
+    _id: user.loved
+  }).exec().catch( e => console.log(e) )
+  if (loved.loved !== ctx.token.uid || user.loved !== loved._id.toString()) {
+    ctx.body = {
+      code: 40102,
+      msg: middlewares.errCode[40102]
+    }
+  }
+  await User.update({
+    '$or': [{
+      _id: user.loved
+    }, {
+      _id: ctx.token.uid
+    }]
+  }, {
+    loved: ''
+  }, {multi: true}).exec().catch( e => console.log(e) )
+  ctx.body = {
+    code: 200
+  }
 }

@@ -30,9 +30,8 @@ const userSchema = new mongoose.Schema({
     required: true
   },
   loved: {
-    type: mongoose.Schema.Types.ObjectId,
-    // 关联关系
-    ref: 'user'
+    type: String,
+    default: ''
   },
   createTime: {
     type: Date,
