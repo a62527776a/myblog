@@ -6,6 +6,7 @@
 
 import jwt from 'jsonwebtoken'
 import User from '../models/user'
+import Ask from '../models/ask'
 import middlewares from '../middlewares'
 import crypto from 'crypto'
 import config from '../config'
@@ -17,6 +18,7 @@ export default async router => {
     .post('/api/user/login', login)
     .patch('/api/user', middlewares.verifyToken, updateUserinfo)
     .post('/api/user/ask', middlewares.verifyToken, askPair)
+    .patch('/api/user/ask', middlewares.verifyToken, resolvePair)
 }
 
 /**
@@ -58,7 +60,7 @@ let register = async (ctx, next) => {
       }
       return
     }
-    //gender 性别 male 男 female 女
+    // gender 性别 male 男 female 女
     if ((gender !== 'male' && gender !== 'female')) {
       ctx.body = {
         code: 10114,
@@ -241,4 +243,163 @@ let updateUserinfo = async (ctx, next) => {
     }
   })
   await next()
+}
+
+/**
+ * @method askPair 请求配对，配对信息需要双方确认 确认后才可成为情侣 记录双方关系
+ * 有配对用户的无法发起请求
+ * @param { String } target 目标配对用户ID
+ */
+let askPair = async (ctx, next) => {
+  let ask = await Ask.findOne({
+    sender: ctx.token.uid
+  }).exec().catch(e => { console.log(e) })
+  // 发过配对请求未被拒绝且未过期时 无法再次发送
+  if (ask && ask.state === 'confirm') {
+    let timeout = new Date() - new Date(ask.createTime)
+    // 超时时间 3天
+    if ((timeout / 1000 / 60 / 60 / 24) < 3) {
+      ctx.body = {
+        code: 10118,
+        msg: middlewares.errCode[10118]
+      }
+      return
+    }
+  }
+  // 配对用户不能为自己
+  if (ctx.request.body.target === ctx.token.uid) {
+    ctx.body = {
+      code: 10117,
+      msg: middlewares.errCode[10117]
+    }
+    return
+  }
+  // 检查自己是否有配对用户
+  let user = await User.findOne({
+    _id: ctx.token.uid
+  }).exec().catch(e => {console.log(e)})
+  if (user.loved) {
+    ctx.body = {
+      code: 10116,
+      msg: middlewares.errCode[10116]
+    }
+    return
+  }
+  // 检查目标用户是否存在
+  let targetUser = await User.findOne({
+    _id: ctx.request.body.target
+  }).exec().catch(e => {console.log(e)})
+  if (!targetUser) {
+    ctx.body = {
+      code: 10119,
+      msg: middlewares.errCode[10119]
+    }
+    return
+  }
+  if (targetUser.loved) {
+    ctx.body = {
+      code: 10120,
+      msg: middlewares.errCode[10120]
+    }
+    return
+  }
+  ask = new Ask({
+    state: 'confirm',
+    sender: ctx.token.uid,
+    target: ctx.request.body.target
+  })
+  // 请求已发出 发出后禁止重复发送
+  await ask.save().then(ask => {
+    ctx.body = {
+      code: 200
+    }
+  }).catch(e => { console.log(e) })
+}
+
+/**
+ * @method resolvePair 回复配对，接受或拒绝 超过3天算拒绝
+ * @param { String } id 配对信息ID
+ * @param { String } state accept 接受 reject 拒绝
+ */
+let resolvePair = async (ctx, next) => {
+  // 处理错误请求
+  let ask = await Ask.findOne({
+    _id: ctx.request.body.id
+  }).exec().catch(e => { console.log(e) })
+  if (!ask || (ctx.request.body.state !== 'accept' && ctx.request.body.state !== 'reject')) {
+    ctx.body = {
+      code: 40102,
+      msg: middlewares.errCode[40102]
+    }
+    return
+  }
+  // 拒绝则直接修改状态
+  if (ctx.request.body.state === 'reject') {
+    await Ask.findByIdAndUpdate({
+      _id: ctx.request.body.id
+    }, {
+      state: ctx.request.body.state
+    }).then(() => {
+      ctx.body = {
+        code: 200
+      }
+    }).catch(e => { console.log(e) })
+    return
+  }
+  // 配对请求是否超时
+  if ((((new Date() - new Date(ask.createTime)) / 1000 / 60 / 60 / 24) > 3)) {
+    ctx.body = {
+      code: 10121,
+      msg: middlewares.errCode[10121]
+    }
+    return
+  }
+  let user = await User.findOne({
+    _id: ctx.token.uid
+  }).exec().catch(e => { console.log(e) })
+  // 如果用户已有配对用户 禁止接受配对
+  if (user.loved) {
+    ctx.body = {
+      code: 10116,
+      msg: middlewares.errCode[10116]
+    }
+    return
+  }
+  let senderUser = await User.findOne({
+    _id: ask.sender
+  }).exec().catch(e => { console.log(e) })
+  // 如果发送者有配对用户 返回错误信息
+  if (senderUser.loved) {
+    ctx.body = {
+      code: 10120,
+      msg: middlewares.errCode[10120]
+    }
+    return
+  }
+  // 修改请求配对信息状态为接受并修正双方配对用户信息
+  await Ask.findByIdAndUpdate({
+    _id: ctx.request.body.id
+  }, {
+    state: ctx.request.body.state
+  }).then(async () => {
+    Promise.all([
+      // 修改发送者loved
+      await User.findByIdAndUpdate({
+        _id: ask.sender
+      }, {
+        loved: ask.target
+      }).exec().catch(e => { console.log(e) })
+    ,
+      // 修改接收者loved
+      await User.findByIdAndUpdate({
+          _id: ask.target
+        }, {
+          loved: ask.sender
+        }).exec().catch(e => { console.log(e) })
+      ]).then(res => {
+        ctx.body = {
+          code: 200
+        }
+    }).catch(e => { console.log(e) })
+  })
 }

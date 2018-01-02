@@ -28,4 +28,3 @@ const askSchema = new mongoose.Schema({
 })
 
 export default mongoose.model('ask', askSchema)
- 
