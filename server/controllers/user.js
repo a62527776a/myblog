@@ -413,7 +413,6 @@ let leave = async (ctx, next) => {
     _id: ctx.token.uid
   }).exec().catch( e => console.log(e) )
   // 边界检查
-  console.log(user)
   if (!user.loved) {
     ctx.body = {
       code: 10122,
