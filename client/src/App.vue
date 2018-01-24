@@ -1,18 +1,25 @@
 <template>
   <div id="app">
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'app'
+  name: 'app',
+  mounted () {
+
+  }
 }
 </script>
 
-<style>
+<style lang="less">
 * {
   padding: 0;
   margin: 0;
+  overflow: hidden;
+}
+html {
+  font-size: 10px;
 }
 </style>
