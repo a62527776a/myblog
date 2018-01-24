@@ -1,0 +1,10 @@
+// 禁止用户选中 以及 触摸时的颜色
+
+.tap-active {
+  tap-highlight-color: rgba(0,0,0,0);
+  user-select:none;
+}
+
+.tap-active:active {
+  background: @tapColor;
+}
