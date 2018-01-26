@@ -10,7 +10,10 @@ import store from './store'
 import common from './components/common'
 // import plugins from './plugins'
 
+// less变量使用vux-loader的theme-less插件处理 https://vux.li/#/zh-CN/vux-loader?id=less-theme
+// import进来的仅为less文件
 import './styles/index.less'
+// 淘宝移动端自适应方案
 import './plugins/flexible.js'
 import 'vue-touch-ripple/dist/vue-touch-ripple.css'
 

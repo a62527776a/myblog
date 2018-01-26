@@ -1,3 +1,3 @@
 <template>
-  <div><router-link to="/article/1">my</router-link></div>
+  <div>my</div>
 </template>

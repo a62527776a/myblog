@@ -1,31 +1,41 @@
 <template>
   <a>
   <transition :name="routerTransition">
-    <router-view />  
+    <keep-alive>
+      <router-view />
+    </keep-alive>
   </transition>
-  <a class="tap-active">asdasd</a>
-    <Tabbar>
-      <TabbarItem>1</TabbarItem>
-      <TabbarItem>1</TabbarItem>
-      <TabbarItem>1</TabbarItem>
-      <TabbarItem>1</TabbarItem>
-    </Tabbar>
+  <Tabbar>
+    <TabbarItem
+      @click.native="$router.push(item.path)"
+      v-for="(item, idx) in navigator"
+      :actived="item.path === $route.path"
+      :key="idx"
+      :label="item.name">
+      <Icons type="article" :actived="item.path === $route.path"></Icons>
+    </TabbarItem>
+  </Tabbar>
   </a>
 </template>
 
 <script>
+import config from '../config'
+
 export default {
   name: 'home',
   data () {
     return {
-      routerTransition: 'slider-right'
+      routerTransition: 'root-navigator-slider-right',
+      navigator: config.navigator
     }
   },
+  methods: {
+
+  },
   watch: {
+    // 根据路由下标决定路由切换过渡动画
     '$route' (to, from) {
-      const toDepth = to.path.split('/').length
-      const fromDepth = from.path.split('/').length
-      this.routerTransition = toDepth < fromDepth ? 'slider-right' : 'slider-left'
+      this.routerTransition = to.meta.idx < from.meta.idx ? 'root-navigator-slider-right' : 'root-navigator-slider-left'
     }
   },
   mounted () {

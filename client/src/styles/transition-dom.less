@@ -1,0 +1,44 @@
+/**
+ * 路由切换时的动画 分为路由前进 路由后退
+ * 切换的时候处理上一个路由的离开动画和当前路由的进入动画
+ **/
+
+.transfer(@opacity, @translateX) {
+  opacity: @opacity;
+  position: absolute;
+  transform: @translateX;
+}
+
+.root-navigator-slider-right-enter-active,
+.root-navigator-slider-right-leave-active,
+.root-navigator-slider-left-enter-active,
+.root-navigator-slider-left-leave-active, 
+.slider-right-enter-active,
+.slider-right-leave-active,
+.slider-left-enter-active,
+.slider-left-leave-active {
+  transition: all .3s;
+}
+
+.root-navigator-slider-right-leave-to,
+.slider-right-leave-to,
+.root-navigator-slider-left-enter,
+.slider-left-enter {
+  .transfer(0, translateX(30px))
+}
+
+.slider-right-enter-active {
+  position: absolute;
+  opacity: 1;
+}
+
+.slider-left-leave-to,
+.slider-right-enter {
+  opacity: 0;
+  position: absolute;
+}
+
+.root-navigator-slider-right-enter,
+.root-navigator-slider-left-leave-to {
+  .transfer(0, translateX(-30px))
+}
