@@ -1,6 +1,8 @@
 <template>
   <div>
     <Scroller
+      ref="scroll"
+      @pullingDown="findData"
       pullDownRefresh
       :height="-44">
       <div>msgboard</div>
@@ -62,6 +64,14 @@ export default {
   data () {
     return {
 
+    }
+  },
+  methods: {
+    findData () {
+      console.log(111)
+      setTimeout(() => {
+        this.$refs.scroll.finishPullDown()
+      }, 3000)
     }
   }
 }

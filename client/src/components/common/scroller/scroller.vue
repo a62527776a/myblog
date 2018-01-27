@@ -3,6 +3,7 @@
   <div>
     <slot />
   </div>
+  <pullDownRefreshControl :pulldownState="pulldownState" :scrollY="scrollY" />
 </div>
 </template>
 
@@ -17,12 +18,14 @@ export default {
    * @param { Number } viewportHeight 视口高度
    * @param { Object } scroller BScroll对象
    * @param { Number } scrollY 滚动Y轴坐标
+   * @param { String } pulldownState 下拉刷新状态 default 默认状态 loading 加载状态
    */
   data () {
     return {
       scroller: null,
       viewportHeight: null,
-      scrollY: 0
+      scrollY: 0,
+      pulldownState: 'default'
     }
   },
   /**
@@ -81,6 +84,7 @@ export default {
     // 作用：当下拉刷新数据加载完毕后，需要调用此方法告诉 better-scroll 数据已加载。
     finishPullDown () {
       this.scroller.finishPullDown()
+      this.pulldownState = 'default'
     },
     // 作用：当上拉加载数据加载完毕后，需要调用此方法告诉 better-scroll 数据已加载。
     finishPullUp () {
@@ -91,11 +95,18 @@ export default {
       this.scroller.on('scroll', (e) => {
         this.scrollY = e.y
       })
+    },
+    initPullDownState () {
+      this.scroller.on('pullingDown', (e) => {
+        this.pulldownState = 'loading'
+        this.$emit('pullingDown')
+      })
     }
   },
   mounted () {
     this.initScroller()
     if (this.pullDownRefresh || this.pullUpLoad) this.initScrollerY()
+    if (this.pullDownRefresh) this.initPullDownState()
   },
   created () {
     this.initViewportHeight()
