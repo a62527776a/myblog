@@ -68,7 +68,8 @@ export default {
           interactive: false // 是否可交互
         } : false,
         pullDownRefresh: this.pullDownRefresh,
-        pullUpLoad: this.pullUpLoad
+        pullUpLoad: this.pullUpLoad,
+        preventDefault: false
       })
     },
     initViewportHeight () {

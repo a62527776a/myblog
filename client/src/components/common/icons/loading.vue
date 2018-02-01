@@ -59,5 +59,6 @@ export default {
 .svg-loading {
   position: fixed;
   top: 40%;
+  z-index: 9999;
 }
 </style>

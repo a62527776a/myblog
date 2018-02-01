@@ -2,16 +2,25 @@
  * 设置网络加载状态
  */
 
-export const SETLOAD = 'SETLOAD'
+export const SETNETWORDLOADSTATE = 'SETNETWORDLOADSTATE'
 
 export default {
-  state: 'resolve',
+  state: {
+    type: 'resolve'
+  },
   mutations: {
     /**
      * @param { String } loadState 加载状态 resolve 完成 reject 失败 loading 加载中
      */
-    [SETLOAD] (state, loadState) {
-      state = loadState
+    [SETNETWORDLOADSTATE] (state, loadState) {
+      setTimeout(() => {
+        state.type = loadState
+      }, 500)
+    }
+  },
+  actions: {
+    [SETNETWORDLOADSTATE] ({ commit }, loadState) {
+      commit('SETNETWORDLOADSTATE', loadState)
     }
   }
 }

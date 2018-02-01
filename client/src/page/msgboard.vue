@@ -2,58 +2,59 @@
   <div>
     <Scroller
       ref="scroll"
-      @pullingDown="findData"
+      @pullingDown="findMsgs"
       pullDownRefresh
       :height="-44">
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>55</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
-      <div>msgboard</div>
+      <div class="msg-card-box">
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      <MsgCard />
+      </div>
     </Scroller>
   </div>
 </template>
@@ -67,12 +68,33 @@ export default {
     }
   },
   methods: {
-    findData () {
-      console.log(111)
+    async findMsgs () {
+      try {
+        let msgs = await this.$ajax.get('msgboard')
+        this.finishPullDown()
+        console.log(msgs)
+      } catch (e) {
+
+      }
+    },
+    finishPullDown () {
       setTimeout(() => {
         this.$refs.scroll.finishPullDown()
-      }, 3000)
+      }, 1000)
     }
+  },
+  activated () {
+
   }
 }
 </script>
+
+<style lang="less">
+.msg-card-box {
+  background: white;
+  margin-top: 1rem;
+  .msgcard:nth-child(1) {
+    margin-top: 0;
+  }
+}
+</style>

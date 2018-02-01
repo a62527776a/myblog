@@ -6,6 +6,8 @@ import Home from '@/page/home'
 import My from '@/page/my'
 import Article from '@/page/article'
 import Msgboard from '@/page/msgboard'
+import MsgboardTextarea from '@/page/msgboard-textarea'
+import UserLogin from '@/page/login'
 
 Vue.use(Router)
 
@@ -30,7 +32,8 @@ export default new Router({
           name: 'Msgboard',
           component: Msgboard,
           meta: {
-            idx: 1
+            idx: 1,
+            keepAlive: true
           }
         },
         {
@@ -47,6 +50,19 @@ export default new Router({
       path: '/article/:id',
       name: 'Article',
       component: Article
+    },
+    {
+      path: '/msgboard/edit',
+      name: 'msgboard',
+      component: MsgboardTextarea,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/user/login',
+      name: 'login',
+      component: UserLogin
     }
   ]
 })

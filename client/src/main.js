@@ -9,6 +9,8 @@ import router from './router'
 import store from './store'
 import common from './components/common'
 // import plugins from './plugins'
+import config from './config'
+import baseAjax from './services'
 
 // less变量使用vux-loader的theme-less插件处理 https://vux.li/#/zh-CN/vux-loader?id=less-theme
 // import进来的仅为less文件
@@ -17,11 +19,11 @@ import './styles/index.less'
 import './plugins/flexible.js'
 import 'vue-touch-ripple/dist/vue-touch-ripple.css'
 
-Vue.config.productionTip = false
+// Vue.config.productionTip = false
 
 // 波纹效果
 Vue.use(VueTouchRipple, {
-  color: '#DDD'
+  color: '#EEE'
 })
 
 Object.keys(common).forEach((key) => {
@@ -29,12 +31,14 @@ Object.keys(common).forEach((key) => {
   Vue.component(`${name}`, common[key])
 })
 
+Vue.prototype.$config = config
+Vue.prototype.$ajax = baseAjax.baseAjax
+
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
+  render: h => h(App),
   router,
   axios,
   store,
-  template: '<App/>',
   components: { App }
-})
+}).$mount('#app')

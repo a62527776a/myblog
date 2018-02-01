@@ -1,4 +1,7 @@
-// Home tabbar navigation 信息
+/**
+ * @const navigation root 路由信息
+ * @const keepAlive 缓存的组件
+ */
 
 export default {
   navigator: [
@@ -14,5 +17,8 @@ export default {
       path: '/my',
       name: '我的'
     }
+  ],
+  keepAlive: [
+    'index', 'article', 'msg-board', 'my'
   ]
 }

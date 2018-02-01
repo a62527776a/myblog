@@ -9,6 +9,7 @@
           stroke-linecap="round"
           stroke-width="4">
       <animateTransform 
+        v-if="scrollY > 40"
         attributeName="transform" 
         type="rotate" 
         dur=".3s" 
@@ -61,7 +62,8 @@ export default {
   data () {
     return {
       len: 3,
-      max: 40
+      max: 40,
+      rotateDom: null
     }
   },
   props: {
@@ -79,15 +81,14 @@ export default {
     'pulldownState': function (val) {
       this.$nextTick(() => {
         let animateDom = this.$refs.loadingAnimate
-        let rotateDom = this.$refs.rotateAnimate
-        let svgDom = this.$refs.svg
         if (val === 'loading') {
-          svgDom.unpauseAnimations()
           animateDom.beginElement()
-          rotateDom.beginElement()
-        } else {
-          svgDom.pauseAnimations()
         }
+      })
+    },
+    'scrollY': function (val) {
+      this.$nextTick(() => {
+        if (val > 40) this.rotateDom && this.rotateDom.beginElement()
       })
     }
   },
@@ -113,6 +114,9 @@ export default {
       x = scrollY > endY ? '70' : ((scrollY - startY) * this.len) + 30
       return x
     }
+  },
+  mounted () {
+    this.rotateDom = this.$refs.rotateAnimate
   }
 }
 </script>
@@ -122,5 +126,6 @@ export default {
   position: absolute;
   top: 0;
   width: 100%;
+  z-index: -2;
 }
 </style>
