@@ -11,6 +11,9 @@ import UIButton from './button/button'
 import UIInput from './input/input'
 import UIAudio from './audio/audio'
 import SoundRecord from './audio/sound-record'
+import Fab from './fab.vue'
+import TouchRipple from './ripple.vue'
+import RippleCore from './core.vue'
 
 export default {
   Tabbar,
@@ -25,5 +28,8 @@ export default {
   UIButton,
   UIInput,
   UIAudio,
-  SoundRecord
+  SoundRecord,
+  TouchRipple,
+  Fab,
+  RippleCore
 }

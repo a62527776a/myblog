@@ -2,6 +2,9 @@
   "name": "koa-blog",
   "version": "0.0.1",
   "description": "a simple koa blog",
+  "engines": {
+    "node": "^6.0"
+  },
   "main": "index.js",
   "scripts": {
     "test": "npm run unit && npm run e2e",
@@ -14,7 +17,7 @@
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "e2e": "node test/e2e/runner.js",
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs",
-    "build": "node build/build.js"
+    "build": "node client/build/build.js"
   },
   "keywords": [
     "koa",
